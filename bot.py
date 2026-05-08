@@ -43,7 +43,7 @@ async def download_video(update: Update, context) -> None:
     await update.message.reply_text("Downloading... This might take a moment.")
 
     ydl_opts = {
-        'format': 'best',
+        'format': 'best',  # အကောင်းဆုံးရနိုင်တဲ့ format ကို တိုက်ရိုက်ယူရန်
         'outtmpl': 'downloaded_video.%(ext)s',
         'cookiefile': 'cookies.txt',
         'quiet': True,
@@ -57,6 +57,7 @@ async def download_video(update: Update, context) -> None:
 
     try:
         with YoutubeDL(ydl_opts) as ydl:
+            # ဗီဒီယိုကို တိုက်ရိုက် download ဆွဲခြင်း (Format loop ပတ်စရာမလိုတော့ပါ)
             download_info_dict = ydl.extract_info(youtube_url, download=True)
             video_file = ydl.prepare_filename(download_info_dict)
 
