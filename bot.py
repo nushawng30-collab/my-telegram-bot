@@ -43,12 +43,20 @@ async def download_video(update: Update, context) -> None:
     await update.message.reply_text("Downloading... This might take a moment.")
 
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        'outtmpl': '%(id)s.%(ext)s',
-        'noplaylist': True,
+        'format': 'bestvideo+bestaudio/best',
+        'outtmpl': 'downloaded_video.%(ext)s',
         'quiet': True,
         'no_warnings': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': False,
+        'logtostderr': False,
+        'addmetadata': True,
+        'writethumbnail': False,
+        'prefer_ffmpeg': True,
+        'referer': 'https://www.google.com/',
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
+
 
     try:
         with YoutubeDL(ydl_opts) as ydl:
