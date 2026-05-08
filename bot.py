@@ -14,10 +14,16 @@ async def start(update: Update, context) -> None:
     await update.message.reply_text("Hi! Send me a YouTube link to download.")
 
 async def download_video(update: Update, context) -> None:
-    youtube_url = re.search(r"(https?://)?(www\.)?(youtube\.com|youtu\.be)/[\w\?=\&-]+", update.message.text)
-    if not youtube_url:
+    message_text = update.message.text
+    # YouTube URL ကို ရှာဖွေခြင်း
+    youtube_url_match = re.search(r"(https?://)?(www\.)?(youtube\.com|youtu\.be)/[\w\?=\&-]+", message_text)
+
+    if not youtube_url_match:
         await update.message.reply_text("Please send a valid YouTube link.")
         return
+
+    # Link စာသားကို သေချာထုတ်ယူခြင်း
+    youtube_url = youtube_url_match.group(0) 
 
     await update.message.reply_text("Downloading... Please wait.")
     
@@ -35,10 +41,12 @@ async def download_video(update: Update, context) -> None:
         with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=True)
             video_file = ydl.prepare_filename(info)
-
         
         await context.bot.send_video(chat_id=update.effective_chat.id, video=open(video_file, 'rb'))
         os.remove(video_file)
+    except Exception as e:
+        await update.message.reply_text(f"Error: {e}")
+
     except Exception as e:
         await update.message.reply_text(f"Error: {e}")
 
