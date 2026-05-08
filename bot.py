@@ -45,6 +45,7 @@ async def download_video(update: Update, context) -> None:
     ydl_opts = {
         'format': 'bestvideo+bestaudio/best',
         'outtmpl': 'downloaded_video.%(ext)s',
+        'cookiefile': 'cookies.txt',  # ဒီစာကြောင်းကို အသစ်ထည့်လိုက်ပါ
         'quiet': True,
         'no_warnings': True,
         'nocheckcertificate': True,
@@ -56,6 +57,7 @@ async def download_video(update: Update, context) -> None:
         'referer': 'https://www.google.com/',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
+
 
 
     try:
