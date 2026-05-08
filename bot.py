@@ -8,6 +8,7 @@ from yt_dlp import YoutubeDL
 # Logging setup
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 
+# Token
 TELEGRAM_BOT_TOKEN = "8548605981:AAGKUCz6qG8VHx8HpTu79LVmiujlTA_rc50"
 
 async def start(update: Update, context) -> None:
@@ -15,17 +16,19 @@ async def start(update: Update, context) -> None:
 
 async def download_video(update: Update, context) -> None:
     message_text = update.message.text
-    youtube_url_match = re.search(r"(https?://)?(www\.)?(youtube\.com|youtu\.be)/[\w\?=\&-]+", message_text)
+    # Link ကို ရှာဖွေခြင်း
+    match = re.search(r"(https?://)?(www\.)?(youtube\.com|youtu\.be)/[\w\?=\&-]+", message_text)
 
-    if not youtube_url_match:
+    if not match:
         await update.message.reply_text("Please send a valid YouTube link.")
         return
 
-    youtube_url = youtube_url_match.group(0)
+    # ဤနေရာတွင် group(0) ကို သေချာထုတ်ယူထားပါသည်
+    youtube_url = match.group(0) 
     await update.message.reply_text("Downloading... Please wait.")
     
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'format': 'best',
         'outtmpl': 'video.%(ext)s',
         'cookiefile': 'cookies.txt',
         'quiet': True,
@@ -52,3 +55,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
