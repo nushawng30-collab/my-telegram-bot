@@ -43,56 +43,22 @@ async def download_video(update: Update, context) -> None:
     await update.message.reply_text("Downloading... This might take a moment.")
 
     ydl_opts = {
-        'format': 'bestvideo+bestaudio/best',
+        'format': 'best',
         'outtmpl': 'downloaded_video.%(ext)s',
-        'cookiefile': 'cookies.txt',  # ဒီစာကြောင်းကို အသစ်ထည့်လိုက်ပါ
+        'cookiefile': 'cookies.txt',
         'quiet': True,
         'no_warnings': True,
         'nocheckcertificate': True,
         'ignoreerrors': False,
-        'logtostderr': False,
         'addmetadata': True,
-        'writethumbnail': False,
         'prefer_ffmpeg': True,
-        'referer': 'https://www.google.com/',
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
-
-
     try:
         with YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(youtube_url, download=False)
-            # Check estimated file size before downloading
-            # Telegram's limit is 50MB (50 * 1024 * 1024 bytes)
-            file_size_limit = 50 * 1024 * 1024
-            
-            # Try to find a suitable format that is under the size limit
-            selected_format = None
-            formats = info_dict.get('formats', [])
-            # Sort formats by file size in ascending order, prioritizing mp4
-            formats.sort(key=lambda x: x.get('filesize', float('inf')))
-
-            for f in formats:
-                if f.get('ext') == 'mp4' and f.get('filesize') and f['filesize'] <= file_size_limit:
-                    selected_format = f['format_id']
-                    break
-            
-            if not selected_format:
-                # If no mp4 under limit, try any format under limit
-                for f in formats:
-                    if f.get('filesize') and f['filesize'] <= file_size_limit:
-                        selected_format = f['format_id']
-                        break
-
-            if not selected_format:
-                await update.message.reply_text("Video is too large (over 50MB) and no smaller format could be found. Please try a different video.")
-                return
-
-            ydl_opts["format"] = selected_format
-            with YoutubeDL(ydl_opts) as ydl_download:
-                download_info_dict = ydl_download.extract_info(youtube_url, download=True)
-                video_file = ydl_download.prepare_filename(download_info_dict)
+            download_info_dict = ydl.extract_info(youtube_url, download=True)
+            video_file = ydl.prepare_filename(download_info_dict)
 
         if os.path.exists(video_file):
             # Extract metadata
