@@ -22,7 +22,7 @@ async def download_video(update: Update, context) -> None:
     await update.message.reply_text("Downloading... Please wait.")
     
     ydl_opts = {
-        'format': 'best',
+        'format': 'bestvideo+bestaudio/best',
         'outtmpl': 'video.%(ext)s',
         'cookiefile': 'cookies.txt',
         'quiet': True,
