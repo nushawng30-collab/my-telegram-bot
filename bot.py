@@ -22,17 +22,20 @@ async def download_video(update: Update, context) -> None:
     await update.message.reply_text("Downloading... Please wait.")
     
     ydl_opts = {
-        'format': 'bestvideo+bestaudio/best',
+        'format': 'best',
         'outtmpl': 'video.%(ext)s',
         'cookiefile': 'cookies.txt',
         'quiet': True,
+        'no_warnings': True,
+        'nocheckcertificate': True,
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
 
     try:
         with YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(youtube_url.group(0), download=True)
+            info = ydl.extract_info(youtube_url, download=True)
             video_file = ydl.prepare_filename(info)
+
         
         await context.bot.send_video(chat_id=update.effective_chat.id, video=open(video_file, 'rb'))
         os.remove(video_file)
